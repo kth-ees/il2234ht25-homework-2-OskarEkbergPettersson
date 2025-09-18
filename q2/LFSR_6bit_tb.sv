@@ -40,7 +40,7 @@ assert property (@(posedge clk) sel |=> parallel_out == ($past(parallel_out) << 
 assert property (@(posedge clk) !sel |=> parallel_out == $past(parallel_in))
     else $error("Parallel load failed, is %b, but should be %b", parallel_out, $past(parallel_in));
 
-assert property (@(posedge rst_n) 1 |=> parallel_out == '0)
+assert property (@(negedge rst_n) 1 |=> parallel_out == '0)
     else $error("Reset did not occur");
 
 endmodule
