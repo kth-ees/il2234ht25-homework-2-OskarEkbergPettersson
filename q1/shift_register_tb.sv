@@ -24,13 +24,14 @@ shift_register #(N) uut (
     .serial_out(serial_out)
 );
 
-
+//Initial block to set the clocks
 initial begin
     clk = 0;
     rst_n = 0;
     forever #5ns clk = ~clk;
 end
 
+//Main test
 initial begin
     #5ns;
     rst_n = 1;
@@ -49,17 +50,21 @@ initial begin
     $stop;
 end
 
+//Assert to check if a parallel load loads correctly
 assert property (@(posedge clk) serial_parallel && load_enable |=> parallel_out == $past(parallel_in)) 
     else $error("Parallel load failed, is %b, but should be %b", parallel_out, $past(parallel_in));
 
+//Assert to check if a serial load loads correctly
 assert property (@(posedge clk) !serial_parallel && load_enable |=> 
         parallel_out == {$past(parallel_out[N-2:0]), $past(serial_in)} &&
         serial_out == $past(parallel_out[N-2]))
     else $error("Serial load failed, is %b, but should be %b. Last clock had %b in parallel and got %b serial", parallel_out, {$past(parallel_out[N-2:0]), $past(serial_in)}, $past(parallel_out), $past(serial_in));
 
+//Assert to check if disabling loading works
 assert property (@(posedge clk) !load_enable |=> parallel_out == $past(parallel_out))
     else $error("Load happened even though load_enable was not active");
 
+//Assert to check if the rst_n resets the register
 assert property (@(negedge rst_n) 1 |=> parallel_out == '0);
 
 endmodule

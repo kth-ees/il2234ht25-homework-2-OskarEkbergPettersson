@@ -15,6 +15,7 @@ module shift_register #(
 
 logic [N-1:0] d;
 
+//Combinatorial block to handle input
 always_comb begin
 	d = !load_enable ? parallel_out :
 		serial_parallel ? parallel_in : {parallel_out[N-2 : 0], serial_in};
@@ -22,6 +23,7 @@ always_comb begin
 	serial_out = parallel_out[N - 1];
 end
 
+//Put a flip flop on the combinatorial block
 always_ff @(posedge clk or negedge rst_n) begin
 	if(!rst_n)
 		parallel_out <= '0;
