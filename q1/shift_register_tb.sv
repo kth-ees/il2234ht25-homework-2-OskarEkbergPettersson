@@ -53,7 +53,8 @@ assert property (@(posedge clk) serial_parallel && load_enable |=> parallel_out 
     else $error("Parallel load failed, is %b, but should be %b", parallel_out, $past(parallel_in));
 
 assert property (@(posedge clk) !serial_parallel && load_enable |=> 
-        parallel_out[N-1:1] == $past(parallel_out[N-2:0]) && parallel_out[0] == $past(serial_in) && serial_out == $past(parallel_out[N-2]))
+        parallel_out == {$past(parallel_out[N-2:0]), $past(serial_in)} &&
+        serial_out == $past(parallel_out[N-2]))
     else $error("Serial load failed, is %b, but should be %b. Last clock had %b in parallel and got %b serial", parallel_out, {$past(parallel_out[N-2:0]), $past(serial_in)}, $past(parallel_out), $past(serial_in));
 
 assert property (@(posedge clk) !load_enable |=> parallel_out == $past(parallel_out))

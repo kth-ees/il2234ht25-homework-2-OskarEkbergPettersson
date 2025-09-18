@@ -16,7 +16,6 @@ module shift_register #(
 logic [N-1:0] d;
 
 always_comb begin
-
 	d = !load_enable ? parallel_out :
 		serial_parallel ? parallel_in : {parallel_out[N-2 : 0], serial_in};
 
